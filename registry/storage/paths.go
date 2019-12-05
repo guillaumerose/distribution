@@ -134,7 +134,10 @@ func pathFor(spec pathSpec) (string, error) {
 
 		return path.Join(append(append(repoPrefix, v.name, "_manifests", "revisions"), components...)...), nil
 	case manifestRevisionLinkPathSpec:
-		root, err := pathFor(manifestRevisionPathSpec(v))
+		root, err := pathFor(manifestRevisionPathSpec{
+			name:     v.name,
+			revision: v.revision,
+		})
 
 		if err != nil {
 			return "", err
@@ -154,7 +157,10 @@ func pathFor(spec pathSpec) (string, error) {
 
 		return path.Join(root, v.tag), nil
 	case manifestTagCurrentPathSpec:
-		root, err := pathFor(manifestTagPathSpec(v))
+		root, err := pathFor(manifestTagPathSpec{
+			name: v.name,
+			tag:  v.tag,
+		})
 
 		if err != nil {
 			return "", err
@@ -162,7 +168,10 @@ func pathFor(spec pathSpec) (string, error) {
 
 		return path.Join(root, "current", "link"), nil
 	case manifestTagIndexPathSpec:
-		root, err := pathFor(manifestTagPathSpec(v))
+		root, err := pathFor(manifestTagPathSpec{
+			name: v.name,
+			tag:  v.tag,
+		})
 
 		if err != nil {
 			return "", err
@@ -170,7 +179,11 @@ func pathFor(spec pathSpec) (string, error) {
 
 		return path.Join(root, "index"), nil
 	case manifestTagIndexEntryLinkPathSpec:
-		root, err := pathFor(manifestTagIndexEntryPathSpec(v))
+		root, err := pathFor(manifestTagIndexEntryPathSpec{
+			name:     v.name,
+			tag:      v.tag,
+			revision: v.revision,
+		})
 
 		if err != nil {
 			return "", err
@@ -208,7 +221,7 @@ func pathFor(spec pathSpec) (string, error) {
 
 		return path.Join(path.Join(append(blobLinkPathComponents, components...)...), "link"), nil
 	case layersPathSpec:
-		return append(repoPrefix, v.repo, "_layers")
+		return path.Join(append(repoPrefix, v.name, "_layers")...), nil
 	case blobsPathSpec:
 		blobsPathPrefix := append(rootPrefix, "blobs")
 		return path.Join(blobsPathPrefix...), nil
@@ -340,7 +353,7 @@ func (manifestTagIndexEntryLinkPathSpec) pathSpec() {}
 
 // layersPathSpec contains the path for the layers inside a repo
 type layersPathSpec struct {
-	repo string
+	name string
 }
 
 func (layersPathSpec) pathSpec() {}

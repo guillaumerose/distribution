@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	errMissingURL = errors.New("missing URL on layer")
-	errInvalidURL = errors.New("invalid URL on layer")
+	errUnexpectedURL = errors.New("unexpected URL on layer")
+	errMissingURL    = errors.New("missing URL on layer")
+	errInvalidURL    = errors.New("invalid URL on layer")
 )
 
 //schema2ManifestHandler is a ManifestHandler that covers schema2 manifests.

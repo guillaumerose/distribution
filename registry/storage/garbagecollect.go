@@ -98,13 +98,15 @@ func MarkAndSweep(ctx context.Context, storageDriver driver.StorageDriver, regis
 			return nil
 		})
 
-		// In certain situations such as unfinished uploads, deleting all
-		// tags in S3 or removing the _manifests folder manually, this
-		// error may be of type PathNotFound.
-		//
-		// In these cases we can continue marking other manifests safely.
-		if _, ok := err.(driver.PathNotFoundError); ok {
-			return nil
+		if err != nil {
+			// In certain situations such as unfinished uploads, deleting all
+			// tags in S3 or removing the _manifests folder manually, this
+			// error may be of type PathNotFound.
+			//
+			// In these cases we can continue marking other manifests safely.
+			if _, ok := err.(driver.PathNotFoundError); ok {
+				return nil
+			}
 		}
 
 		return err
